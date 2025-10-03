@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hub de Jogos</title>
+    <!-- Dependências Externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <!-- Arquivos Locais -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <!-- ======================= TELA DO HUB DE JOGOS ======================= -->
+    <!-- Esta é a tela principal que permite a seleção entre os dois jogos. -->
+    <div id="hub-screen" class="w-full h-screen p-4 flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-5xl md:text-7xl font-black text-indigo-600 mb-4">Hub de Jogos</h1>
+            <p class="text-lg md:text-xl text-slate-600 mb-12">Escolha uma aventura para começar!</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Card do Jogo de Idiomas -->
+                <div onclick="showLanguageGame()" class="game-card cursor-pointer bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                    <div class="text-6xl mb-4">🧠</div>
+                    <h2 class="text-3xl font-bold text-teal-600 mb-2">Jogo de Idiomas</h2>
+                    <p class="text-slate-500">Aprenda novas palavras em inglês e alemão de forma divertida.</p>
+                </div>
+                <!-- Card do Jogo do Robô -->
+                <div onclick="showRobotGame()" class="game-card cursor-pointer bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                    <div class="text-6xl mb-4">🤖</div>
+                    <h2 class="text-3xl font-bold text-rose-500 mb-2">Aventura de Pulos</h2>
+                    <p class="text-slate-500">Ajude o robô a desviar dos monstros e coletar moedas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================= JOGO DE IDIOMAS ======================= -->
+    <!-- Contêiner principal para toda a estrutura do jogo de idiomas. -->
+    <div id="language-game-wrapper" class="hidden w-full min-h-screen p-4 flex items-center justify-center">
+        <canvas id="confetti-canvas"></canvas>
+        <div id="app-container" class="w-full max-w-3xl lg:max-w-6xl mx-auto">
+            <button onclick="showHub()" class="back-to-hub-btn btn bg-white/80 hover:bg-white text-indigo-600 font-bold py-2 px-4 rounded-lg shadow-md">← Voltar ao Menu</button>
+            
+            <!-- Tela de Seleção de Idioma -->
+            <div id="language-screen" class="card-base text-center p-6 lg:p-10">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-600 mb-8">Escolha o Idioma para Aprender</h1>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                    <button onclick="languageGame.selectLanguage('de')" class="btn w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 lg:py-8 px-6 rounded-xl shadow-md">
+                        <span class="text-4xl lg:text-5xl">🇩🇪</span><br><span class="lg:text-2xl">Alemão</span>
+                    </button>
+                    <button onclick="languageGame.selectLanguage('en')" class="btn w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 lg:py-8 px-6 rounded-xl shadow-md">
+                        <span class="text-4xl lg:text-5xl">🇬🇧</span><br><span class="lg:text-2xl">Inglês</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tela de Seleção de Categoria -->
+            <div id="category-screen" class="hidden card-base text-center p-6 lg:p-10">
+                <h1 data-translate-key="select_category" class="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-600 mb-8"></h1>
+                <div id="category-buttons" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                <button onclick="languageGame.showScreen('language-screen')" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg mt-8 lg:text-lg" data-translate-key="back"></button>
+            </div>
+            
+            <!-- Tela Inicial do Jogo (Menu de Modos) -->
+            <div id="start-screen" class="hidden card-base text-center p-6 lg:p-10">
+                <h1 data-translate-key="dictation_practice" class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2"></h1>
+                <p data-translate-key="category" id="start-screen-category" class="text-lg lg:text-2xl text-stone-600 mb-8"></p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="languageGame.showSinglePlayerSetup('dictation')" class="btn w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 lg:py-6 px-6 rounded-xl shadow-md lg:text-xl" data-translate-key="dictation_mode_1p"></button>
+                    <button onclick="languageGame.showSinglePlayerSetup('reading')" class="btn w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 lg:py-6 px-6 rounded-xl shadow-md lg:text-xl" data-translate-key="reading_mode_1p"></button>
+                </div>
+                <div class="mt-4">
+                    <button onclick="languageGame.showMultiplayerSetup()" class="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 lg:py-6 px-6 rounded-xl shadow-md lg:text-xl" data-translate-key="multiplayer_mode"></button>
+                </div>
+                <button onclick="languageGame.showScreen('category-screen')" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg mt-8 lg:text-lg" data-translate-key="change_category"></button>
+            </div>
+            
+            <!-- Tela de Configuração para Um Jogador -->
+            <div id="single-player-setup-screen" class="hidden card-base p-6 lg:p-10">
+                <h2 data-translate-key="single_player_setup" class="text-3xl lg:text-4xl font-bold text-center text-indigo-600 mb-6"></h2>
+                <div class="mb-6">
+                    <label data-translate-key="choose_avatar_sp" class="block text-lg lg:text-xl font-medium text-stone-700 mb-2"></label>
+                    <div class="p-4 border rounded-lg bg-stone-50/70">
+                        <h3 class="font-bold text-lg lg:text-xl text-stone-800 mb-2" data-translate-key="player"></h3>
+                        <input type="text" id="single-player-name" placeholder="" class="w-full p-3 border border-stone-300 rounded-lg mb-3 lg:text-lg">
+                        <div id="single-player-avatars" class="flex justify-around"></div>
+                        <input type="hidden" id="single-player-avatar" value="🦁">
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-between items-center">
+                    <button onclick="languageGame.showScreen('start-screen')" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg lg:text-lg" data-translate-key="back"></button>
+                    <button onclick="languageGame.startSinglePlayerGame()" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg" data-translate-key="start_game"></button>
+                </div>
+            </div>
+            
+            <!-- Tela de Configuração para Multijogador -->
+            <div id="multiplayer-setup-screen" class="hidden card-base p-6 lg:p-10">
+                <h2 data-translate-key="multiplayer_setup" class="text-3xl lg:text-4xl font-bold text-center text-indigo-600 mb-6"></h2>
+                <div class="mb-6">
+                    <label data-translate-key="how_many_players" class="block text-lg lg:text-xl font-medium text-stone-700 mb-2"></label>
+                    <select id="player-count" class="w-full p-3 border border-stone-300 rounded-lg lg:text-lg" onchange="languageGame.generatePlayerInputs(this.value)"></select>
+                </div>
+                <div class="mb-6">
+                    <label data-translate-key="which_game_mode" class="block text-lg lg:text-xl font-medium text-stone-700 mb-2"></label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button id="mode-btn-dictation" data-translate-key="dictation_mode" class="mode-btn btn w-full p-3 border-4 rounded-lg font-bold lg:text-xl" onclick="languageGame.selectGameMode('dictation')"></button>
+                        <button id="mode-btn-reading" data-translate-key="reading_mode" class="mode-btn btn w-full p-3 border-4 rounded-lg font-bold lg:text-xl" onclick="languageGame.selectGameMode('reading')"></button>
+                    </div>
+                    <input type="hidden" id="multiplayer-game-mode" value="dictation">
+                </div>
+                <div class="mb-6">
+                    <label data-translate-key="choose_avatars" class="block text-lg lg:text-xl font-medium text-stone-700 mb-2"></label>
+                    <div id="player-inputs" class="space-y-6"></div>
+                </div>
+                <div class="mt-8 flex justify-between items-center">
+                    <button onclick="languageGame.showScreen('start-screen')" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg lg:text-lg" data-translate-key="back"></button>
+                    <button onclick="languageGame.startMultiplayerGame()" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg" data-translate-key="start_game"></button>
+                </div>
+            </div>
+            
+            <!-- Tela Principal do Jogo (Gameplay) -->
+            <div id="game-screen" class="hidden">
+                <div class="mb-4">
+                    <button onclick="languageGame.showStartScreen()" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg lg:text-lg" data-translate-key="back_to_menu"></button>
+                </div>
+                <div id="multiplayer-scoreboard" class="mb-4 grid grid-cols-2 md:grid-cols-4 gap-2 text-center"></div>
+                <div id="turn-indicator" class="mb-4 text-center p-3 card-base"></div>
+                <div id="question-area" class="card-base p-6 text-center"></div>
+                <div id="feedback-area" class="text-center mt-4 h-20 flex flex-col justify-center items-center">
+                    <div id="feedback-message" class="h-10"></div>
+                    <button id="next-btn" data-translate-key="next_turn" class="hidden btn w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg"></button>
+                </div>
+            </div>
+            
+            <!-- Tela de Fim de Jogo -->
+            <div id="end-screen" class="hidden card-base text-center p-6 lg:p-10">
+                <h2 data-translate-key="game_over" class="text-3xl lg:text-5xl font-bold text-teal-600 mb-4"></h2>
+                <div id="final-scoreboard" class="mb-6"></div>
+                <div id="report-area" class="mb-6 text-left"></div>
+                <button onclick="languageGame.showStartScreen()" class="btn bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg" data-translate-key="play_again"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================= JOGO DO ROBÔ ======================= -->
+    <!-- Contêiner principal para toda a estrutura do jogo do robô. -->
+    <div id="robot-game-wrapper" class="hidden w-full h-screen flex items-center justify-center">
+        <div id="game-container">
+            <button onclick="showHub()" class="back-to-hub-btn btn bg-white/80 hover:bg-white text-rose-500 font-bold py-2 px-4 rounded-lg shadow-md">← Voltar ao Menu</button>
+            <canvas id="gameCanvas"></canvas>
+            <div id="ui-container">
+                <div id="score">Pontos: 0</div>
+                <div id="coins">Moedas: 0</div>
+                <div id="level">Nível: 1</div>
+            </div>
+            <div id="level-up-message"></div>
+            <div id="message-box">
+                <h1>Aventura de Pulos</h1>
+                <p>Use ESPAÇO, ENTER (OK no controle) ou o TOQUE para pular!</p>
+                <button id="start-button">Iniciar Jogo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script principal que carrega a lógica de ambos os jogos -->
+    <script src="script.js"></script>
+</body>
+</html>
+
