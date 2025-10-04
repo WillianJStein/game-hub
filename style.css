@@ -1,67 +1,217 @@
-Este arquivo contém todos os estilos para o Hub de Jogos.
-  Ele é dividido em seções para facilitar a manutenção.
-  ---
-  This file contains all styles for the Game Hub.
-  It is divided into sections for easier maintenance.
+/* --- 1. CONFIGURAÇÃO DE TEMA E VARIÁVEIS GLOBAIS / THEME SETUP & GLOBAL VARIABLES --- */
+
+/* PT: Define as variáveis de cor para o tema claro (light).
+  EN: Defines the color variables for the light theme.
 */
+html.light {
+    --bg-primary: #f0f4f8; /* slate-100 */
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --text-primary: #1e293b; /* slate-800 */
+    --text-secondary: #475569; /* slate-600 */
+    --text-highlight: #4f46e5; /* indigo-600 */
+    --border-color: transparent;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --icon-color: #1e293b;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    /* Gradientes do Fundo / Background Gradients */
+    --grad-1: rgba(199, 210, 254, 0.5);
+    --grad-2: rgba(165, 243, 252, 0.5);
+}
 
-/* --- 1. Estilos Gerais e Utilitários / General Styles & Utilities --- */
+/* PT: Define as variáveis de cor para o tema escuro (dark).
+  EN: Defines the color variables for the dark theme.
+*/
+html.dark {
+    --bg-primary: #0f172a; /* slate-900 */
+    --bg-card: #1e293b; /* slate-800 sólido */
+    --bg-card-opaque: #1e293b; /* slate-800 sólido */
+    --bg-input: #334155; /* slate-700 */
+    --text-primary: #f1f5f9; /* slate-100 */
+    --text-secondary: #94a3b8; /* slate-400 */
+    --text-highlight: #818cf8; /* indigo-400 */
+    --border-color: #4338ca; /* indigo-700 */
+    --border-color-light: #4a5162;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --icon-color: #f1f5f9;
+
+    /* Gradientes do Fundo (mais sutis) / Background Gradients (more subtle) */
+    --grad-1: rgba(79, 70, 229, 0.2); /* indigo-600 com alpha */
+    --grad-2: rgba(56, 189, 248, 0.15); /* sky-400 com alpha */
+}
+
+/* PT: Aplica as variáveis aos elementos.
+  EN: Applies the variables to the elements.
+*/
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f0f4f8;
-    color: #1e293b;
-    /* Previne o comportamento de "puxar para atualizar" em dispositivos móveis. */
-    /* Prevents the 'pull-to-refresh' behavior on mobile devices. */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     overscroll-behavior: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.hidden {
-    display: none;
+#hub-screen,
+html.dark #language-game-wrapper {
+    background-image:
+        radial-gradient(circle at 15% 15%, var(--grad-1) 0%, transparent 40%),
+        radial-gradient(circle at 85% 75%, var(--grad-2) 0%, transparent 40%);
 }
 
+
+/* --- 2. ESTILOS DO HUB / HUB STYLES --- */
+
+#hub-screen h1 { color: var(--text-highlight); }
+#hub-screen p { color: var(--text-secondary); }
+
+.game-card {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: all 0.3s ease;
+}
+.game-card:hover {
+    transform: scale(1.03);
+    border-color: var(--border-color);
+}
+.game-card p {
+    color: var(--text-secondary);
+}
+
+/* Botão de Tema e Seletor de Idioma / Theme Button & Language Selector */
+#theme-toggle, #lang-selector {
+    background-color: var(--bg-card);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    border-radius: 9999px; /* rounded-full */
+}
+
+#theme-toggle {
+    transition: transform 0.2s ease;
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+#lang-selector {
+    padding: 0.25rem; /* p-1 */
+    display: flex;
+}
+
+.lang-btn {
+    padding: 0.25rem 0.5rem; /* p-1 px-2 */
+    border-radius: 9999px;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+.lang-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+.lang-btn.selected {
+    opacity: 1;
+    background-color: var(--text-highlight);
+    color: white; /* Garante que o emoji não mude de cor */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+
+/* --- 3. ESTILOS DO JOGO DE IDIOMAS / LANGUAGE GAME STYLES --- */
+
+#language-game-wrapper {
+    background-color: #fffaf0;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(255, 179, 186, 0.4) 0%, transparent 30%),
+        radial-gradient(circle at 85% 30%, rgba(168, 218, 220, 0.4) 0%, transparent 35%);
+}
+html.dark #language-game-wrapper {
+    background-color: var(--bg-primary);
+}
+
+/* Componentes do Jogo de Idiomas no modo escuro */
+html.dark #language-game-wrapper .card-base,
+html.dark #language-game-wrapper .back-to-hub-btn {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color-light);
+}
+
+html.dark #language-game-wrapper h1,
+html.dark #language-game-wrapper .text-indigo-600 {
+    color: var(--text-highlight) !important;
+}
+
+html.dark #language-game-wrapper p,
+html.dark #language-game-wrapper label,
+html.dark #language-game-wrapper h3 {
+    color: var(--text-primary) !important;
+}
+
+html.dark #language-game-wrapper .text-stone-700,
+html.dark #language-game-wrapper .text-stone-600 {
+    color: var(--text-secondary) !important;
+}
+
+/* Inputs, Selects e Placeholders */
+html.dark #language-game-wrapper input,
+html.dark #language-game-wrapper select {
+    background-color: var(--bg-input);
+    border-color: var(--border-color-light);
+    color: var(--text-primary);
+}
+html.dark #language-game-wrapper input::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Cards internos (ex: seleção de avatar) */
+html.dark #language-game-wrapper .bg-stone-50\/70 {
+    background-color: rgba(15, 23, 42, 0.5); /* Fundo um pouco mais escuro para o painel de avatar */
+}
+
+/* Botões de Categoria, Voltar, etc. */
+html.dark #language-game-wrapper .btn.bg-white,
+html.dark #language-game-wrapper .bg-stone-200,
+html.dark #language-game-wrapper .bg-stone-100 {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+}
+html.dark #language-game-wrapper .btn.bg-white:hover,
+html.dark #language-game-wrapper .bg-stone-200:hover,
+html.dark #language-game-wrapper .bg-stone-100:hover {
+     background-color: var(--border-color-light);
+}
+
+/* Botões de Modo de Jogo (Ditado/Leitura) */
+html.dark #language-game-wrapper .mode-btn.selected.border-teal-500 {
+    background-color: rgba(13, 148, 136, 0.2);
+    border-color: #14b8a6;
+}
+html.dark #language-game-wrapper .mode-btn.selected.border-amber-500 {
+    background-color: rgba(245, 158, 11, 0.2);
+    border-color: #f59e0b;
+}
+
+/* Cor da palavra principal no jogo */
+#question-area h2 {
+    color: #0F766E;
+}
+html.dark #question-area h2 {
+    color: #2dd4bf; /* Teal-400 para melhor contraste no escuro */
+}
+
+/* Estilos base (mantidos) */
 .card-base {
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 .btn {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-
 .btn:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-}
-
-/* --- 2. Estilos do Hub de Seleção / Hub Selection Styles --- */
-#hub-screen {
-    background-image:
-        radial-gradient(circle at 15% 15%, rgba(199, 210, 254, 0.5) 0%, transparent 40%),
-        radial-gradient(circle at 85% 75%, rgba(165, 243, 252, 0.5) 0%, transparent 40%);
-}
-
-.game-card {
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-}
-.game-card:hover {
-    transform: scale(1.03);
-    border-color: #6366f1;
-}
-
-/* --- 3. Estilos do Jogo de Idiomas / Language Game Styles --- */
-#language-game-wrapper {
-    background-color: #fffaf0;
-    background-image:
-        radial-gradient(circle at 10% 20%, rgba(255, 179, 186, 0.4) 0%, transparent 30%),
-        radial-gradient(circle at 85% 30%, rgba(168, 218, 220, 0.4) 0%, transparent 35%),
-        radial-gradient(circle at 20% 85%, rgba(255, 223, 186, 0.4) 0%, transparent 30%),
-        radial-gradient(circle at 90% 80%, rgba(253, 201, 201, 0.4) 0%, transparent 35%);
-    background-attachment: fixed;
 }
 .selected-correct { box-shadow: 0 0 0 4px #22c55e; }
 .selected-incorrect { box-shadow: 0 0 0 4px #ef4444; }
@@ -82,11 +232,16 @@ body {
     0% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.7); }
     100% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
 }
-
-/* --- 4. Estilos do Jogo do Robô / Robot Game Styles --- */
-#robot-game-wrapper {
-     background-color: #1a1a2e;
+.back-to-hub-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 50;
 }
+
+
+/* --- 4. ESTILOS DO JOGO DO ROBÔ / ROBOT GAME STYLES --- */
+
 #game-container {
     position: relative;
     width: 95vw;
@@ -132,14 +287,4 @@ body {
 }
 #start-button:hover { background-color: #33ffe7; transform: translateY(-2px); box-shadow: 0 6px #00bfa5; }
 #start-button:active { transform: translateY(2px); box-shadow: 0 2px #00bfa5; }
-
-/* --- 5. Botão Voltar / Back Button --- */
-/* Estilo para o botão "Voltar ao Menu" usado em ambos os jogos. */
-/* Style for the "Back to Menu" button used in both games. */
-.back-to-hub-btn {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 50;
-}
 
