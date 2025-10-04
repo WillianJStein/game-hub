@@ -1,50 +1,79 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Hub de Jogos</title>
-    <!-- Dependências Externas -->
+    <!-- SCRIPT DO TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <!-- Arquivos Locais -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Colocado no HEAD para evitar o "efeito flash" onde a página carrega em modo claro antes de mudar para o escuro. -->
+    <!-- Placed in the HEAD to avoid the "flash effect" where the page loads in light mode before switching to dark. -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.remove('light');
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+        }
+    </script>
 </head>
+
 <body class="flex items-center justify-center min-h-screen">
 
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-3">
+        <!-- SELETOR DE IDIOMA DA UI -->
+        <div id="lang-selector" class="hidden items-center space-x-2">
+            <button data-lang="pt" onclick="languageGame.setUILanguage('pt')" class="lang-btn text-xl">🇧🇷</button>
+            <button data-lang="en" onclick="languageGame.setUILanguage('en')" class="lang-btn text-xl">🇺🇸</button>
+            <button data-lang="es" onclick="languageGame.setUILanguage('es')" class="lang-btn text-xl">🇪🇸</button>
+        </div>
+        <!-- BOTÃO DE TEMA -->
+        <button id="theme-toggle" class="p-2 rounded-full text-2xl">
+            <svg id="theme-toggle-dark-icon" class="hidden h-7 w-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden h-7 w-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707-.707a1 1 0 01-1.414 0zM3 11a1 1 0 100-2H2a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+    </div>
+
+
     <!-- ======================= TELA DO HUB DE JOGOS ======================= -->
-    <!-- Esta é a tela principal que permite a seleção entre os dois jogos. -->
     <div id="hub-screen" class="w-full h-screen p-4 flex items-center justify-center">
         <div class="text-center">
-            <h1 class="text-5xl md:text-7xl font-black text-indigo-600 mb-4">Hub de Jogos</h1>
-            <p class="text-lg md:text-xl text-slate-600 mb-12">Escolha uma aventura para começar!</p>
+            <h1 class="text-5xl md:text-7xl font-black mb-4">Hub de Jogos</h1>
+            <p class="text-lg md:text-xl mb-12">Escolha uma aventura para começar!</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <!-- Card do Jogo de Idiomas -->
-                <div onclick="showLanguageGame()" class="game-card cursor-pointer bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                <div onclick="showLanguageGame()" class="game-card cursor-pointer rounded-2xl p-8 shadow-lg">
                     <div class="text-6xl mb-4">🧠</div>
                     <h2 class="text-3xl font-bold text-teal-600 mb-2">Jogo de Idiomas</h2>
-                    <p class="text-slate-500">Aprenda novas palavras em inglês e alemão de forma divertida.</p>
+                    <p>Aprenda novas palavras em inglês e alemão de forma divertida.</p>
                 </div>
                 <!-- Card do Jogo do Robô -->
-                <div onclick="showRobotGame()" class="game-card cursor-pointer bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg">
+                <div onclick="showRobotGame()" class="game-card cursor-pointer rounded-2xl p-8 shadow-lg">
                     <div class="text-6xl mb-4">🤖</div>
                     <h2 class="text-3xl font-bold text-rose-500 mb-2">Aventura de Pulos</h2>
-                    <p class="text-slate-500">Ajude o robô a desviar dos monstros e coletar moedas.</p>
+                    <p>Ajude o robô a desviar dos monstros e coletar moedas.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- ======================= JOGO DE IDIOMAS ======================= -->
-    <!-- Contêiner principal para toda a estrutura do jogo de idiomas. -->
     <div id="language-game-wrapper" class="hidden w-full min-h-screen p-4 flex items-center justify-center">
         <canvas id="confetti-canvas"></canvas>
-        <div id="app-container" class="w-full max-w-3xl lg:max-w-6xl mx-auto">
-            <button onclick="showHub()" class="back-to-hub-btn btn bg-white/80 hover:bg-white text-indigo-600 font-bold py-2 px-4 rounded-lg shadow-md">← Voltar ao Menu</button>
-            
-            <!-- Tela de Seleção de Idioma -->
+        <div id="app-container" class="w-full max-w-3xl lg:max-w-6xl mx-auto relative">
+            <button onclick="showHub()" class="back-to-hub-btn btn bg-white/80 hover:bg-white font-bold py-2 px-4 rounded-lg shadow-md">← Voltar ao Hub</button>
+
+            <!-- Language Screen -->
             <div id="language-screen" class="card-base text-center p-6 lg:p-10">
-                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-600 mb-8">Escolha o Idioma para Aprender</h1>
+                <h1 data-translate-key="choose_language_title" class="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-600 mb-2"></h1>
+                <p data-translate-key="ui_language" class="text-lg text-stone-600 mb-8"></p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
                     <button onclick="languageGame.selectLanguage('de')" class="btn w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 lg:py-8 px-6 rounded-xl shadow-md">
                         <span class="text-4xl lg:text-5xl">🇩🇪</span><br><span class="lg:text-2xl">Alemão</span>
@@ -54,17 +83,16 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Tela de Seleção de Categoria -->
+            <!-- Category Screen -->
             <div id="category-screen" class="hidden card-base text-center p-6 lg:p-10">
                 <h1 data-translate-key="select_category" class="text-3xl md:text-4xl lg:text-5xl font-bold text-indigo-600 mb-8"></h1>
                 <div id="category-buttons" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
                 <button onclick="languageGame.showScreen('language-screen')" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg mt-8 lg:text-lg" data-translate-key="back"></button>
             </div>
-            
-            <!-- Tela Inicial do Jogo (Menu de Modos) -->
+            <!-- Start Screen -->
             <div id="start-screen" class="hidden card-base text-center p-6 lg:p-10">
-                <h1 data-translate-key="dictation_practice" class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2"></h1>
+                <h1 data-translate-key="dictation_practice" class="text-4xl lg:text-5xl font-bold text-teal-600 mb-2">
+                </h1>
                 <p data-translate-key="category" id="start-screen-category" class="text-lg lg:text-2xl text-stone-600 mb-8"></p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button onclick="languageGame.showSinglePlayerSetup('dictation')" class="btn w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 lg:py-6 px-6 rounded-xl shadow-md lg:text-xl" data-translate-key="dictation_mode_1p"></button>
@@ -75,8 +103,7 @@
                 </div>
                 <button onclick="languageGame.showScreen('category-screen')" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg mt-8 lg:text-lg" data-translate-key="change_category"></button>
             </div>
-            
-            <!-- Tela de Configuração para Um Jogador -->
+            <!-- Single Player Setup Screen -->
             <div id="single-player-setup-screen" class="hidden card-base p-6 lg:p-10">
                 <h2 data-translate-key="single_player_setup" class="text-3xl lg:text-4xl font-bold text-center text-indigo-600 mb-6"></h2>
                 <div class="mb-6">
@@ -93,8 +120,7 @@
                     <button onclick="languageGame.startSinglePlayerGame()" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg" data-translate-key="start_game"></button>
                 </div>
             </div>
-            
-            <!-- Tela de Configuração para Multijogador -->
+            <!-- Multiplayer Setup Screen -->
             <div id="multiplayer-setup-screen" class="hidden card-base p-6 lg:p-10">
                 <h2 data-translate-key="multiplayer_setup" class="text-3xl lg:text-4xl font-bold text-center text-indigo-600 mb-6"></h2>
                 <div class="mb-6">
@@ -118,8 +144,7 @@
                     <button onclick="languageGame.startMultiplayerGame()" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg" data-translate-key="start_game"></button>
                 </div>
             </div>
-            
-            <!-- Tela Principal do Jogo (Gameplay) -->
+            <!-- Game Screen -->
             <div id="game-screen" class="hidden">
                 <div class="mb-4">
                     <button onclick="languageGame.showStartScreen()" class="btn bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold py-2 px-4 rounded-lg lg:text-lg" data-translate-key="back_to_menu"></button>
@@ -132,8 +157,7 @@
                     <button id="next-btn" data-translate-key="next_turn" class="hidden btn w-full max-w-xs mx-auto bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md lg:text-lg"></button>
                 </div>
             </div>
-            
-            <!-- Tela de Fim de Jogo -->
+            <!-- End Screen -->
             <div id="end-screen" class="hidden card-base text-center p-6 lg:p-10">
                 <h2 data-translate-key="game_over" class="text-3xl lg:text-5xl font-bold text-teal-600 mb-4"></h2>
                 <div id="final-scoreboard" class="mb-6"></div>
@@ -144,10 +168,9 @@
     </div>
 
     <!-- ======================= JOGO DO ROBÔ ======================= -->
-    <!-- Contêiner principal para toda a estrutura do jogo do robô. -->
-    <div id="robot-game-wrapper" class="hidden w-full h-screen flex items-center justify-center">
+    <div id="robot-game-wrapper" class="hidden w-full h-screen flex items-center justify-center relative">
+        <button onclick="showHub()" class="back-to-hub-btn btn bg-white/80 hover:bg-white text-rose-500 font-bold py-2 px-4 rounded-lg shadow-md">← Voltar ao Hub</button>
         <div id="game-container">
-            <button onclick="showHub()" class="back-to-hub-btn btn bg-white/80 hover:bg-white text-rose-500 font-bold py-2 px-4 rounded-lg shadow-md">← Voltar ao Menu</button>
             <canvas id="gameCanvas"></canvas>
             <div id="ui-container">
                 <div id="score">Pontos: 0</div>
@@ -163,10 +186,11 @@
         </div>
     </div>
 
-    <!-- Script principal que carrega a lógica de ambos os jogos -->
+    <!-- Scripts do Jogo / Game Scripts -->
+    <!-- CORREÇÃO: Readicionando a biblioteca de confetes / FIX: Re-adding confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
-
-
 
