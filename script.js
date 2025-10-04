@@ -13,6 +13,7 @@ const langSelector = document.getElementById('lang-selector');
 // Funções de Navegação / Navigation Functions
 function showHub() {
     // Para o jogo do robô se estiver rodando
+    // Stops the robot game if it's running
     if (robotGame.gameStarted && !robotGame.gameOver) {
         robotGame.gameOver = true; // Isso irá parar o loop de animação
     }
@@ -66,7 +67,6 @@ themeToggleButton.addEventListener('click', () => {
 // --- 2. LÓGICA DO JOGO DE IDIOMAS / LANGUAGE GAME LOGIC ---
 
 const languageGame = {
-    // ... (restante do objeto do jogo de idiomas)
     data: {
         de: {
             foods: [{ word: 'Banane', emoji: '🍌' }, { word: 'Apfel', emoji: '🍎' }, { word: 'Keks', emoji: '🍪' }, { word: 'Brokkoli', emoji: '🥦' }, { word: 'Sandwich', emoji: '🥪' }, { word: 'Spaghetti', emoji: '🍝' }, { word: 'Kuchen', emoji: '🥧' }, { word: 'Eier', emoji: '🥚' }, { word: 'Pizza', emoji: '🍕' }, { word: 'Salat', emoji: '🥗' }, { word: 'Karotte', emoji: '🥕' }, { word: 'Eis', emoji: '🍦' }, { word: 'Suppe', emoji: '🥣' }, { word: 'Popcorn', emoji: '🍿' }, { word: 'Torte', emoji: '🎂' }, { word: 'Saft', emoji: '🧃' }, { word: 'Wasser', emoji: '💧' }],
@@ -145,6 +145,11 @@ const languageGame = {
 
         const savedLang = localStorage.getItem('uiLang') || 'pt';
         this.setUILanguage(savedLang);
+
+        // Adiciona listeners para os botões de idioma
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.setUILanguage(btn.dataset.lang));
+        });
     },
 
     getEl: function(id) { return document.getElementById(id); },
@@ -156,7 +161,7 @@ const languageGame = {
         // Atualiza a UI com as traduções corretas
         document.querySelectorAll('[data-translate-key]').forEach(el => {
             const key = el.getAttribute('data-translate-key');
-            if (this.translations[lang][key]) {
+            if (this.translations[lang] && this.translations[lang][key]) {
                 el.innerHTML = this.translations[lang][key];
             }
         });
@@ -166,17 +171,13 @@ const languageGame = {
             btn.classList.toggle('selected', btn.dataset.lang === lang);
         });
 
-        // Atualiza placeholders e outros textos que não usam data-translate-key
-        this.updateDynamicTexts(lang);
-    },
-
-    updateDynamicTexts: function(lang) {
-        const namePlaceholder = this.translations[lang].type_name;
-        document.querySelectorAll('input[type="text"]').forEach(input => {
-            if (input.placeholder !== namePlaceholder) {
-                input.placeholder = namePlaceholder;
-            }
-        });
+        // Se já estivermos em uma tela que depende do idioma, atualiza-a
+        if (this.gameState.lang) {
+            this.selectLanguage(this.gameState.lang);
+        }
+        if (this.gameState.category) {
+             this.getEl('start-screen-category').innerText = `${this.translations[lang].category}: ${this.translations[lang][this.gameState.category]}`;
+        }
     },
     
     showScreen: function(screenId) {
@@ -323,13 +324,13 @@ const languageGame = {
     
     updateUI: function() {
         const currentPlayer = this.gameState.players[this.gameState.currentPlayerIndex];
-        const questionNumber = this.gameState.words.length - currentPlayer.availableWords.length;
+        const questionNumber = this.gameState.words.length - currentPlayer.availableWords.length + 1;
         const uiLang = this.gameState.uiLang;
 
         if (this.gameState.playerCount > 1) {
             this.getEl('turn-indicator').classList.remove('hidden');
             this.getEl('multiplayer-scoreboard').classList.remove('hidden');
-            const turnText = uiLang === 'en' ? `${this.translations[uiLang].turn_of} ${currentPlayer.name}'s turn!` : `${this.translations[uiLang].turn_of} ${currentPlayer.name}!`;
+            const turnText = uiLang === 'en' ? `${this.translations[uiLang].turn_of} ${currentPlayer.name}'s turn!` : `${this.translations[uiLang].turn_of} ${currentPlayer.name}`;
             this.getEl('turn-indicator').innerHTML = `<div><span class="text-2xl lg:text-3xl">${currentPlayer.avatar}</span> <span class="text-xl lg:text-2xl font-bold align-middle">${turnText}</span></div><div class="text-md lg:text-lg text-stone-600 font-semibold mt-1">(${this.translations[uiLang].question_of.replace('{x}', questionNumber).replace('{y}', this.gameState.words.length)})</div>`;
             let scoreboardHtml = '';
             this.gameState.players.forEach(p => {
@@ -427,7 +428,6 @@ const languageGame = {
 // --- 3. LÓGICA DO JOGO DO ROBÔ / ROBOT GAME LOGIC ---
 
 const robotGame = {
-    // ... (restante do objeto do jogo do robô)
     canvas: null, ctx: null, scoreEl: null, levelEl: null, coinsEl: null,
     messageBox: null, startButton: null, levelUpMessageEl: null,
     GAME_WIDTH: 800, GAME_HEIGHT: 500,
@@ -468,7 +468,7 @@ const robotGame = {
             assetsLoaded++;
             if (assetsLoaded === 2) {
                 this.showInitialScreen();
-                this.startButton.addEventListener('click', () => { this.initGame(); });
+                // O event listener do botão de start é adicionado no window.onload global
             }
         };
         
@@ -601,7 +601,7 @@ const robotGame = {
     },
 
     checkLevelUp: function() {
-        const newLevel = Math.floor(this.score / 500); // MUDANÇA: Nível aumenta a cada 500 pontos
+        const newLevel = Math.floor(this.score / 500); // Nível aumenta a cada 500 pontos
         if (this.score > 0 && newLevel > this.level) {
             this.level = newLevel;
             const config = this.levels[Math.min(this.level, this.levels.length - 1)];
@@ -681,6 +681,7 @@ window.onload = () => {
     // Adiciona os event listeners para o jogo do robô / Add event listeners for the robot game
     const jumpStart = (e) => { e.preventDefault(); robotGame.handleJumpStart(); };
     const jumpEnd = (e) => { e.preventDefault(); robotGame.handleJumpEnd(); };
+    robotGame.startButton.addEventListener('click', () => robotGame.initGame());
     window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'Enter') jumpStart(e); });
     window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'Enter') jumpEnd(e); });
     robotGame.canvas.addEventListener('touchstart', jumpStart);
