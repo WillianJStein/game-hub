@@ -1,102 +1,72 @@
- * Hub de Jogos - Lógica Principal / Game Hub - Main Logic
+// --- 1. CONTROLES GLOBAIS E DO HUB / GLOBAL & HUB CONTROLS ---
 
-
-// --- 1. CONTROLE GLOBAL E DO HUB / GLOBAL & HUB CONTROL ---
-// Gerencia a visibilidade das telas e a troca de estilos do corpo (body).
-// Manages screen visibility and switches body styles.
-
-
+// Elementos da UI / UI Elements
 const hubScreen = document.getElementById('hub-screen');
 const languageGameWrapper = document.getElementById('language-game-wrapper');
 const robotGameWrapper = document.getElementById('robot-game-wrapper');
 const bodyEl = document.querySelector('body');
+const themeToggleButton = document.getElementById('theme-toggle');
+const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+const langSelector = document.getElementById('lang-selector');
 
-/**
- * Mostra a tela principal do Hub e esconde as telas dos jogos.
- * Também para o loop de animação do jogo do robô se ele estiver rodando.
- * ---
- * Shows the main Hub screen and hides the game screens.
- * Also stops the robot game's animation loop if it's running.
- */
+// Funções de Navegação / Navigation Functions
 function showHub() {
     // Para o jogo do robô se estiver rodando
-    // Stops the robot game if it is running
     if (robotGame.gameStarted && !robotGame.gameOver) {
-        robotGame.gameOver = true; 
+        robotGame.gameOver = true; // Isso irá parar o loop de animação
     }
-    
-    // Reseta o estilo do body para o padrão do hub
-    // Resets the body style to the hub's default
-    bodyEl.style.cssText = `
-        font-family: 'Inter', sans-serif;
-        background-color: #f0f4f8;
-        color: #1e293b;
-        overscroll-behavior: none;
-    `;
-
+    langSelector.classList.add('hidden'); // Esconde o seletor de idioma no Hub
     hubScreen.classList.remove('hidden');
     languageGameWrapper.classList.add('hidden');
     robotGameWrapper.classList.add('hidden');
 }
 
-/**
- * Mostra a tela do Jogo de Idiomas.
- * ---
- * Shows the Language Game screen.
- */
 function showLanguageGame() {
-    // Aplica o estilo de fundo específico do jogo de idiomas
-    // Applies the specific background style for the language game
-    bodyEl.style.cssText = `
-        font-family: 'Inter', sans-serif;
-        background-color: #fffaf0;
-        background-image:
-            radial-gradient(circle at 10% 20%, rgba(255, 179, 186, 0.4) 0%, transparent 30%),
-            radial-gradient(circle at 85% 30%, rgba(168, 218, 220, 0.4) 0%, transparent 35%),
-            radial-gradient(circle at 20% 85%, rgba(255, 223, 186, 0.4) 0%, transparent 30%),
-            radial-gradient(circle at 90% 80%, rgba(253, 201, 201, 0.4) 0%, transparent 35%);
-        background-attachment: fixed;
-    `;
+    langSelector.classList.remove('hidden'); // Mostra o seletor de idioma
     hubScreen.classList.add('hidden');
     languageGameWrapper.classList.remove('hidden');
     robotGameWrapper.classList.add('hidden');
-    // Reseta para a tela inicial do jogo
-    // Resets to the game's initial screen
-    languageGame.showScreen('language-screen');
+    languageGame.showScreen('language-screen'); // Reseta para a tela inicial do jogo
 }
 
-/**
- * Mostra a tela do Jogo do Robô.
- * ---
- * Shows the Robot Game screen.
- */
 function showRobotGame() {
-     // Aplica o estilo de fundo específico do jogo do robô
-     // Applies the specific background style for the robot game
-     bodyEl.style.cssText = `
-        font-family: 'Inter', sans-serif;
-        background-color: #1a1a2e;
-        color: white;
-        overscroll-behavior: none;
-    `;
+    langSelector.classList.add('hidden'); // Esconde o seletor de idioma
     hubScreen.classList.add('hidden');
     languageGameWrapper.classList.add('hidden');
     robotGameWrapper.classList.remove('hidden');
-    // Prepara o jogo do robô para começar
-    // Prepares the robot game to start
-    robotGame.showInitialScreen(); 
+    robotGame.showInitialScreen(); // Prepara o jogo do robô para começar
 }
 
+// --- LÓGICA DO MODO ESCURO / DARK MODE LOGIC ---
+
+function updateThemeIcons() {
+    if (document.documentElement.classList.contains('dark')) {
+        themeToggleLightIcon.classList.add('hidden');
+        themeToggleDarkIcon.classList.remove('hidden');
+    } else {
+        themeToggleDarkIcon.classList.add('hidden');
+        themeToggleLightIcon.classList.remove('hidden');
+    }
+}
+
+themeToggleButton.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    document.documentElement.classList.toggle('light');
+
+    if (localStorage.getItem('theme') === 'dark') {
+        localStorage.setItem('theme', 'light');
+    } else {
+        localStorage.setItem('theme', 'dark');
+    }
+    updateThemeIcons();
+});
 
 
 // --- 2. LÓGICA DO JOGO DE IDIOMAS / LANGUAGE GAME LOGIC ---
-// Objeto `languageGame` contém todos os dados e métodos para o jogo.
-// The `languageGame` object contains all data and methods for the game.
-
 
 const languageGame = {
-    // Dados: palavras, traduções, avatares, etc.
-    // Data: words, translations, avatars, etc.
+    // ... (restante do objeto do jogo de idiomas)
     data: {
         de: {
             foods: [{ word: 'Banane', emoji: '🍌' }, { word: 'Apfel', emoji: '🍎' }, { word: 'Keks', emoji: '🍪' }, { word: 'Brokkoli', emoji: '🥦' }, { word: 'Sandwich', emoji: '🥪' }, { word: 'Spaghetti', emoji: '🍝' }, { word: 'Kuchen', emoji: '🥧' }, { word: 'Eier', emoji: '🥚' }, { word: 'Pizza', emoji: '🍕' }, { word: 'Salat', emoji: '🥗' }, { word: 'Karotte', emoji: '🥕' }, { word: 'Eis', emoji: '🍦' }, { word: 'Suppe', emoji: '🥣' }, { word: 'Popcorn', emoji: '🍿' }, { word: 'Torte', emoji: '🎂' }, { word: 'Saft', emoji: '🧃' }, { word: 'Wasser', emoji: '💧' }],
@@ -111,10 +81,9 @@ const languageGame = {
             animals: [{ word: 'Dog', emoji: '🐶' }, { word: 'Cat', emoji: '🐱' }, { word: 'Lion', emoji: '🦁' }, { word: 'Horse', emoji: '🐴' }, { word: 'Fish', emoji: '🐠' }, { word: 'Bird', emoji: '🐦' }, { word: 'Cow', emoji: '🐮' }, { word: 'Monkey', emoji: '🐵' }]
         }
     },
-    // Textos da interface, atualmente apenas em português.
-    // UI texts, currently only in Portuguese.
     translations: {
         pt: {
+            choose_language_title: 'Escolha o Idioma para Aprender', ui_language: 'Idioma da Interface:',
             select_category: 'Escolha uma Categoria', foods: 'Alimentos', colors: 'Cores', objects: 'Objetos', animals: 'Animais',
             dictation_practice: 'Prática', category: 'Categoria', dictation_mode_1p: 'Modo Ditado (1 Jogador)',
             reading_mode_1p: 'Modo Leitura (1 Jogador)', multiplayer_mode: '🎉 Modo Multiplayer 🎉', change_category: 'Mudar Categoria',
@@ -129,64 +98,112 @@ const languageGame = {
             review_words: 'Palavras para revisar:', all_correct: 'Acertou tudo! 🥳', play_again: 'Jogar Novamente',
             say_the_word: 'Diga a palavra:', click_correct_figure: 'Agora, clique na figura correta!',
             what_food_is_this: 'Qual item é este?'
+        },
+        en: {
+            choose_language_title: 'Choose the Language to Learn', ui_language: 'UI Language:',
+            select_category: 'Choose a Category', foods: 'Foods', colors: 'Colors', objects: 'Objects', animals: 'Animals',
+            dictation_practice: 'Practice', category: 'Category', dictation_mode_1p: 'Dictation Mode (1 Player)',
+            reading_mode_1p: 'Reading Mode (1 Player)', multiplayer_mode: '🎉 Multiplayer Mode 🎉', change_category: 'Change Category',
+            single_player_setup: 'Game Setup', choose_avatar_sp: 'Choose your name and avatar:',
+            multiplayer_setup: 'Multiplayer Game Setup', how_many_players: '1. How many players?',
+            players_2: '2 Players', players_3: '3 Players', players_4: '4 Players', which_game_mode: '2. Which game mode?',
+            dictation_mode: 'Dictation Mode', reading_mode: 'Reading Mode', choose_avatars: '3. Choose your names and avatars:',
+            player: 'Player', type_name: 'Enter name', back: '← Back', start_game: 'Start Game!', back_to_menu: '← Back to Menu',
+            turn_of: "It's", question_of: 'Question {x} of {y}', correct: 'Correct! 👍', incorrect: 'Wrong! 😢',
+            next_turn: 'Next Turn →', game_over: 'Game Over!', final_report: 'Final Report:',
+            winner: 'Winner:', tie: 'It\'s a Tie!', final_score: 'Final score: {x} of {y} correct!',
+            review_words: 'Words to review:', all_correct: 'You got everything right! 🥳', play_again: 'Play Again',
+            say_the_word: 'Say the word:', click_correct_figure: 'Now, click the correct figure!',
+            what_food_is_this: 'What item is this?'
+        },
+        es: {
+            choose_language_title: 'Elige el Idioma para Aprender', ui_language: 'Idioma de la Interfaz:',
+            select_category: 'Elige una Categoría', foods: 'Alimentos', colors: 'Colores', objects: 'Objetos', animals: 'Animales',
+            dictation_practice: 'Práctica', category: 'Categoría', dictation_mode_1p: 'Modo Dictado (1 Jugador)',
+            reading_mode_1p: 'Modo Lectura (1 Jugador)', multiplayer_mode: '🎉 Modo Multijugador 🎉', change_category: 'Cambiar Categoría',
+            single_player_setup: 'Configurar Juego', choose_avatar_sp: 'Elige tu nombre y avatar:',
+            multiplayer_setup: 'Configurar Juego Multijugador', how_many_players: '1. ¿Cuántos jugadores?',
+            players_2: '2 Jugadores', players_3: '3 Jugadores', players_4: '4 Jugadores', which_game_mode: '2. ¿Qué modo de juego?',
+            dictation_mode: 'Modo Dictado', reading_mode: 'Modo Lectura', choose_avatars: '3. Elijan sus nombres y avatares:',
+            player: 'Jugador', type_name: 'Escribe el nombre', back: '← Volver', start_game: '¡Empezar Juego!', back_to_menu: '← Volver al Menú',
+            turn_of: 'Es el turno de', question_of: 'Pregunta {x} de {y}', correct: '¡Correcto! 👍', incorrect: '¡Incorrecto! 😢',
+            next_turn: 'Siguiente Turno →', game_over: '¡Fin del Juego!', final_report: 'Reporte Final:',
+            winner: 'Ganador:', tie: '¡Empate!', final_score: 'Puntuación final: ¡{x} de {y} aciertos!',
+            review_words: 'Palabras para repasar:', all_correct: '¡Acertaste todo! 🥳', play_again: 'Jugar de Nuevo',
+            say_the_word: 'Di la palabra:', click_correct_figure: '¡Ahora, haz clic en la figura correcta!',
+            what_food_is_this: '¿Qué artículo es este?'
         }
     },
     avatars: [ '🦁', '🦄', '🦒', '🐬' ],
-    // Objeto para armazenar o estado atual do jogo (idioma, categoria, jogadores, etc.)
-    // Object to store the current game state (language, category, players, etc.)
     gameState: {},
     allScreens: ['language-screen', 'category-screen', 'start-screen', 'single-player-setup-screen', 'multiplayer-setup-screen', 'game-screen', 'end-screen'],
     myConfetti: null,
 
-    /**
-     * Inicializa o jogo: cria a instância do confete e adiciona o event listener ao botão "Próximo".
-     * ---
-     * Initializes the game: creates the confetti instance and adds the event listener to the "Next" button.
-     */
     init: function() {
-        const confettiCanvas = document.getElementById('confetti-canvas');
-        this.myConfetti = confetti.create(confettiCanvas, { resize: true, useWorker: true });
+        this.myConfetti = confetti.create(document.getElementById('confetti-canvas'), { resize: true, useWorker: true });
         document.getElementById('next-btn').addEventListener('click', () => this.nextTurn());
-        this.translateUI('pt');
+
+        const savedLang = localStorage.getItem('uiLang') || 'pt';
+        this.setUILanguage(savedLang);
     },
 
-    // --- Métodos Utilitários / Utility Methods ---
     getEl: function(id) { return document.getElementById(id); },
-    
-    translateUI: function(lang) {
+
+    setUILanguage: function(lang) {
+        localStorage.setItem('uiLang', lang);
+        this.gameState.uiLang = lang;
+
+        // Atualiza a UI com as traduções corretas
         document.querySelectorAll('[data-translate-key]').forEach(el => {
             const key = el.getAttribute('data-translate-key');
-            if (this.translations.pt[key]) {
-                el.innerHTML = this.translations.pt[key];
+            if (this.translations[lang][key]) {
+                el.innerHTML = this.translations[lang][key];
+            }
+        });
+
+        // Atualiza os botões de seleção de idioma
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.lang === lang);
+        });
+
+        // Atualiza placeholders e outros textos que não usam data-translate-key
+        this.updateDynamicTexts(lang);
+    },
+
+    updateDynamicTexts: function(lang) {
+        const namePlaceholder = this.translations[lang].type_name;
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            if (input.placeholder !== namePlaceholder) {
+                input.placeholder = namePlaceholder;
             }
         });
     },
     
-    // --- Gerenciamento de Telas / Screen Management ---
     showScreen: function(screenId) {
         this.allScreens.forEach(id => this.getEl(id).classList.add('hidden'));
         this.getEl(screenId).classList.remove('hidden');
     },
     
-    // --- Fluxo de Configuração do Jogo / Game Setup Flow ---
     selectLanguage: function(lang) {
         this.gameState.lang = lang;
-        this.translateUI('pt'); 
+        const uiLang = this.gameState.uiLang || 'pt';
+        
         const categoryButtons = this.getEl('category-buttons');
         categoryButtons.innerHTML = '';
         Object.keys(this.data[lang]).forEach(categoryKey => {
-            const categoryName = this.translations.pt[categoryKey];
+            const categoryName = this.translations[uiLang][categoryKey]; // Usa o idioma da UI
             categoryButtons.innerHTML += `<button onclick="languageGame.selectCategory('${categoryKey}')" class="btn w-full bg-white hover:bg-stone-50 text-indigo-600 font-bold py-8 lg:py-12 px-6 rounded-xl shadow-md text-2xl lg:text-3xl">${categoryName}</button>`;
         });
         const playerCountSelect = this.getEl('player-count');
-        playerCountSelect.innerHTML = `<option value="2">${this.translations.pt.players_2}</option><option value="3">${this.translations.pt.players_3}</option><option value="4">${this.translations.pt.players_4}</option>`;
+        playerCountSelect.innerHTML = `<option value="2">${this.translations[uiLang].players_2}</option><option value="3">${this.translations[uiLang].players_3}</option><option value="4">${this.translations[uiLang].players_4}</option>`;
         this.showScreen('category-screen');
     },
     
     selectCategory: function(category) {
         this.gameState.category = category;
         this.gameState.words = this.data[this.gameState.lang][category];
-        this.getEl('start-screen-category').innerText = `${this.translations.pt.category}: ${this.translations.pt[category]}`;
+        const uiLang = this.gameState.uiLang || 'pt';
+        this.getEl('start-screen-category').innerText = `${this.translations[uiLang].category}: ${this.translations[uiLang][category]}`;
         this.showScreen('start-screen');
     },
     
@@ -197,9 +214,9 @@ const languageGame = {
         const nameInput = this.getEl('single-player-name');
         const avatarContainer = this.getEl('single-player-avatars');
         
-        nameInput.value = ''; // Limpa o valor para permitir a edição / Clears the value to allow editing
-        nameInput.placeholder = this.translations.pt.player; // Usa o nome padrão como exemplo / Uses the default name as a placeholder
-        
+        nameInput.value = ''; // Limpa o campo
+        nameInput.placeholder = this.translations[this.gameState.uiLang].player + ' 1';
+
         avatarContainer.innerHTML = '';
         this.avatars.forEach((avatar, index) => {
             avatarContainer.innerHTML += `<button class="avatar-btn btn text-4xl lg:text-5xl p-2 rounded-full ${index === 0 ? 'selected' : ''}" data-avatar="${avatar}" onclick="languageGame.selectSinglePlayerAvatar(this)">${avatar}</button>`;
@@ -215,7 +232,8 @@ const languageGame = {
     },
     
     startSinglePlayerGame: function() {
-        const playerName = this.getEl('single-player-name').value || this.translations.pt.player;
+        const uiLang = this.gameState.uiLang;
+        const playerName = this.getEl('single-player-name').value || this.translations[uiLang].player + ' 1';
         const playerAvatar = this.getEl('single-player-avatar').value;
         const playerData = { name: playerName, avatar: playerAvatar, score: 0, availableWords: this.shuffleArray(this.gameState.words), incorrectlyAnsweredWords: [] };
         this.startGame(this.gameState.mode, 1, [playerData]);
@@ -255,9 +273,10 @@ const languageGame = {
     
     generatePlayerInputs: function(count) {
         const container = this.getEl('player-inputs');
+        const uiLang = this.gameState.uiLang;
         container.innerHTML = '';
         for (let i = 0; i < count; i++) {
-            const playerHtml = `<div class="p-4 border rounded-lg bg-stone-50/70"><h3 class="font-bold text-lg lg:text-xl text-stone-800 mb-2">${this.translations.pt.player} ${i + 1}</h3><input type="text" id="player-name-${i}" placeholder="${this.translations.pt.player} ${i + 1}" class="w-full p-3 border border-stone-300 rounded-lg mb-3 lg:text-lg" value=""><div class="flex justify-around">${this.avatars.map((avatar, avatarIndex) => `<button class="avatar-btn btn text-4xl lg:text-5xl p-2 rounded-full ${avatarIndex % this.avatars.length === i ? 'selected' : ''}" data-player="${i}" data-avatar="${avatar}" onclick="languageGame.selectAvatar(this, ${i})">${avatar}</button>`).join('')}</div><input type="hidden" id="player-avatar-${i}" value="${this.avatars[i % this.avatars.length]}"></div>`;
+            const playerHtml = `<div class="p-4 border rounded-lg bg-stone-50/70"><h3 class="font-bold text-lg lg:text-xl text-stone-800 mb-2">${this.translations[uiLang].player} ${i + 1}</h3><input type="text" id="player-name-${i}" placeholder="${this.translations[uiLang].player} ${i + 1}" class="w-full p-3 border border-stone-300 rounded-lg mb-3 lg:text-lg" value=""><div class="flex justify-around">${this.avatars.map((avatar, avatarIndex) => `<button class="avatar-btn btn text-4xl lg:text-5xl p-2 rounded-full ${avatarIndex % this.avatars.length === i ? 'selected' : ''}" data-player="${i}" data-avatar="${avatar}" onclick="languageGame.selectAvatar(this, ${i})">${avatar}</button>`).join('')}</div><input type="hidden" id="player-avatar-${i}" value="${this.avatars[i % this.avatars.length]}"></div>`;
             container.innerHTML += playerHtml;
         }
     },
@@ -270,21 +289,15 @@ const languageGame = {
     
     startMultiplayerGame: function() {
         const playerCount = parseInt(this.getEl('player-count').value);
+        const uiLang = this.gameState.uiLang;
         let players = [];
         for (let i = 0; i < playerCount; i++) {
-            players.push({ 
-                name: this.getEl(`player-name-${i}`).value || `${this.translations.pt.player} ${i + 1}`, // Garante um nome padrão se o campo estiver vazio / Ensures a default name if the field is empty
-                avatar: this.getEl(`player-avatar-${i}`).value, 
-                score: 0, 
-                availableWords: this.shuffleArray(this.gameState.words), 
-                incorrectlyAnsweredWords: [] 
-            });
+            players.push({ name: this.getEl(`player-name-${i}`).value || `${this.translations[uiLang].player} ${i + 1}`, avatar: this.getEl(`player-avatar-${i}`).value, score: 0, availableWords: this.shuffleArray(this.gameState.words), incorrectlyAnsweredWords: [] });
         }
         const gameMode = this.getEl('multiplayer-game-mode').value;
         this.startGame(gameMode, playerCount, players);
     },
     
-    // --- Lógica Principal do Jogo (Gameplay) / Main Gameplay Logic ---
     startGame: function(mode, playerCount, playersData) {
         this.gameState.mode = mode;
         this.gameState.playerCount = playerCount;
@@ -311,11 +324,13 @@ const languageGame = {
     updateUI: function() {
         const currentPlayer = this.gameState.players[this.gameState.currentPlayerIndex];
         const questionNumber = this.gameState.words.length - currentPlayer.availableWords.length;
-        const lang = 'pt'; 
+        const uiLang = this.gameState.uiLang;
+
         if (this.gameState.playerCount > 1) {
             this.getEl('turn-indicator').classList.remove('hidden');
             this.getEl('multiplayer-scoreboard').classList.remove('hidden');
-            this.getEl('turn-indicator').innerHTML = `<div><span class="text-2xl lg:text-3xl">${currentPlayer.avatar}</span> <span class="text-xl lg:text-2xl font-bold align-middle">${this.translations[lang].turn_of} ${currentPlayer.name}!</span></div><div class="text-md lg:text-lg text-stone-600 font-semibold mt-1">(${this.translations[lang].question_of.replace('{x}', questionNumber).replace('{y}', this.gameState.words.length)})</div>`;
+            const turnText = uiLang === 'en' ? `${this.translations[uiLang].turn_of} ${currentPlayer.name}'s turn!` : `${this.translations[uiLang].turn_of} ${currentPlayer.name}!`;
+            this.getEl('turn-indicator').innerHTML = `<div><span class="text-2xl lg:text-3xl">${currentPlayer.avatar}</span> <span class="text-xl lg:text-2xl font-bold align-middle">${turnText}</span></div><div class="text-md lg:text-lg text-stone-600 font-semibold mt-1">(${this.translations[uiLang].question_of.replace('{x}', questionNumber).replace('{y}', this.gameState.words.length)})</div>`;
             let scoreboardHtml = '';
             this.gameState.players.forEach(p => {
                 scoreboardHtml += `<div class="p-2 card-base ${this.gameState.players.indexOf(p) === this.gameState.currentPlayerIndex ? 'ring-2 ring-indigo-500' : ''}"><span class="text-2xl lg:text-4xl">${p.avatar}</span><span class="block font-bold lg:text-2xl">${p.score}</span></div>`;
@@ -324,7 +339,7 @@ const languageGame = {
         } else {
             this.getEl('turn-indicator').classList.remove('hidden');
             this.getEl('multiplayer-scoreboard').classList.add('hidden');
-            this.getEl('turn-indicator').innerHTML = `<div class="flex items-center justify-center space-x-4 text-lg lg:text-2xl font-semibold"><span>${currentPlayer.avatar} ${currentPlayer.name}</span><span>|</span><span>${this.translations[lang].question_of.replace('{x}', questionNumber).replace('{y}', this.gameState.words.length)}</span><span>|</span><span>${currentPlayer.score}</span></div>`;
+            this.getEl('turn-indicator').innerHTML = `<div class="flex items-center justify-center space-x-4 text-lg lg:text-2xl font-semibold"><span>${currentPlayer.avatar} ${currentPlayer.name}</span><span>|</span><span>${this.translations[uiLang].question_of.replace('{x}', questionNumber).replace('{y}', this.gameState.words.length)}</span><span>|</span><span>${currentPlayer.score}</span></div>`;
         }
     },
     
@@ -341,11 +356,12 @@ const languageGame = {
         }
         options = this.shuffleArray(options);
         let questionHtml = '';
+        const uiLang = this.gameState.uiLang;
         if (this.gameState.mode === 'dictation') {
-            questionHtml = `<div class="lg:flex lg:items-center lg:gap-12"><div class="lg:w-1/2 lg:text-center mb-8 lg:mb-0"><p class="text-stone-600 mb-4 text-lg lg:text-xl">${this.translations.pt.say_the_word}</p><h2 class="text-4xl md:text-5xl font-bold text-teal-700 mb-8">${question.word}</h2><p class="text-stone-600 mb-6 text-lg lg:text-xl">${this.translations.pt.click_correct_figure}</p></div><div class="lg:w-1/2 grid grid-cols-2 gap-4">${options.map(opt => { const display = opt.color ? `<div class="w-full h-full rounded-full" style="background-color: ${opt.color}; border: 1px solid #ccc;"></div>` : `<span class="text-5xl md:text-6xl">${opt.emoji}</span>`; return `<button data-word="${opt.word}" class="emoji-btn btn card-base p-4 h-24 md:h-32 lg:h-40 flex items-center justify-center border-4 border-transparent" onclick="languageGame.checkAnswer(this, '${opt.word}')">${display}</button>` }).join('')}</div></div>`;
+            questionHtml = `<div class="lg:flex lg:items-center lg:gap-12"><div class="lg:w-1/2 lg:text-center mb-8 lg:mb-0"><p class="text-stone-600 mb-4 text-lg lg:text-xl">${this.translations[uiLang].say_the_word}</p><h2 class="text-4xl md:text-5xl font-bold mb-8">${question.word}</h2><p class="text-stone-600 mb-6 text-lg lg:text-xl">${this.translations[uiLang].click_correct_figure}</p></div><div class="lg:w-1/2 grid grid-cols-2 gap-4">${options.map(opt => { const display = opt.color ? `<div class="w-full h-full rounded-full" style="background-color: ${opt.color}; border: 1px solid #ccc;"></div>` : `<span class="text-5xl md:text-6xl">${opt.emoji}</span>`; return `<button data-word="${opt.word}" class="emoji-btn btn card-base p-4 h-24 md:h-32 lg:h-40 flex items-center justify-center border-4 border-transparent" onclick="languageGame.checkAnswer(this, '${opt.word}')">${display}</button>` }).join('')}</div></div>`;
         } else {
             const display = question.color ? `<div class="w-24 h-24 md:w-32 md:h-32 rounded-full mx-auto" style="background-color: ${question.color}; border: 1px solid #ccc;"></div>` : `<div class="text-8xl md:text-9xl">${question.emoji}</div>`;
-            questionHtml = `<div class="lg:flex lg:items-center lg:gap-12"><div class="lg:w-2/5 text-center mb-8 lg:mb-0"><p class="text-stone-600 mb-6 text-lg lg:text-xl">${this.translations.pt.what_food_is_this}</p>${display}</div><div class="lg:w-3/5 space-y-3">${options.map(opt => `<button data-word="${opt.word}" class="emoji-btn btn card-base w-full p-4 lg:p-5 text-2xl font-semibold border-4 border-transparent" onclick="languageGame.checkAnswer(this, '${opt.word}')">${opt.word}</button>`).join('')}</div></div>`;
+            questionHtml = `<div class="lg:flex lg:items-center lg:gap-12"><div class="lg:w-2/5 text-center mb-8 lg:mb-0"><p class="text-stone-600 mb-6 text-lg lg:text-xl">${this.translations[uiLang].what_food_is_this}</p>${display}</div><div class="lg:w-3/5 space-y-3">${options.map(opt => `<button data-word="${opt.word}" class="emoji-btn btn card-base w-full p-4 lg:p-5 text-2xl font-semibold border-4 border-transparent" onclick="languageGame.checkAnswer(this, '${opt.word}')">${opt.word}</button>`).join('')}</div></div>`;
         }
         this.getEl('question-area').innerHTML = questionHtml;
     },
@@ -354,16 +370,16 @@ const languageGame = {
         const allButtons = this.getEl('question-area').querySelectorAll('button');
         allButtons.forEach(btn => btn.disabled = true);
         const currentPlayer = this.gameState.players[this.gameState.currentPlayerIndex];
-        const lang = 'pt'; 
+        const uiLang = this.gameState.uiLang;
         if (selectedWord === this.gameState.currentQuestion.word) {
             currentPlayer.score++;
             selectedButton.classList.add('selected-correct');
-            this.getEl('feedback-message').innerHTML = `<p class="text-3xl lg:text-4xl font-bold text-green-600">${this.translations[lang].correct}</p>`;
+            this.getEl('feedback-message').innerHTML = `<p class="text-3xl lg:text-4xl font-bold text-green-600">${this.translations[uiLang].correct}</p>`;
             this.myConfetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         } else {
             currentPlayer.incorrectlyAnsweredWords.push(this.gameState.currentQuestion);
             selectedButton.classList.add('selected-incorrect');
-            this.getEl('feedback-message').innerHTML = `<p class="text-3xl lg:text-4xl font-bold text-red-600">${this.translations[lang].incorrect}</p>`;
+            this.getEl('feedback-message').innerHTML = `<p class="text-3xl lg:text-4xl font-bold text-red-600">${this.translations[uiLang].incorrect}</p>`;
             const correctButton = Array.from(allButtons).find(btn => btn.dataset.word === this.gameState.currentQuestion.word);
             if (correctButton) {
                 correctButton.classList.add('correct-answer-highlight');
@@ -377,64 +393,51 @@ const languageGame = {
     showEndScreen: function() {
         this.showScreen('end-screen');
         const players = this.gameState.players;
-        const lang = 'pt'; 
+        const uiLang = this.gameState.uiLang;
+        
         if (this.gameState.playerCount > 1) {
             players.sort((a, b) => b.score - a.score);
             const winnerScore = players[0].score;
             const winners = players.filter(p => p.score === winnerScore);
-            let winnerHtml = winners.length > 1 ? `<h3 class="text-2xl lg:text-4xl font-bold text-amber-500 mb-4">${this.translations[lang].tie}</h3>` : `<h3 class="text-2xl lg:text-4xl font-bold text-amber-500 mb-4">${this.translations[lang].winner} ${winners.map(w => w.avatar + ' ' + w.name).join(' & ')}! 🏆</h3>`;
+            let winnerHtml = winners.length > 1 ? `<h3 class="text-2xl lg:text-4xl font-bold text-amber-500 mb-4">${this.translations[uiLang].tie}</h3>` : `<h3 class="text-2xl lg:text-4xl font-bold text-amber-500 mb-4">${this.translations[uiLang].winner} ${winners.map(w => w.avatar + ' ' + w.name).join(' & ')}! 🏆</h3>`;
             this.getEl('final-scoreboard').innerHTML = winnerHtml;
-            let reportHtml = `<h3 class="text-xl lg:text-2xl font-bold mb-3 text-stone-700">${this.translations[lang].final_report}</h3>`;
+            let reportHtml = `<h3 class="text-xl lg:text-2xl font-bold mb-3 text-stone-700">${this.translations[uiLang].final_report}</h3>`;
             players.forEach(p => {
                 reportHtml += `<div class="mb-4 p-4 card-base"><p class="font-bold text-lg lg:text-xl">${p.avatar} ${p.name} - ${p.score}</p>`;
                 if (p.incorrectlyAnsweredWords.length > 0) {
-                    reportHtml += `<p class="text-sm lg:text-base mt-1">${this.translations[lang].review_words}</p><ul>${p.incorrectlyAnsweredWords.map(item => { const display = item.color ? `<span class="inline-block w-4 h-4 rounded-full mr-2" style="background-color: ${item.color}; border: 1px solid #ccc;"></span>` : item.emoji; return `<li class="ml-4 text-stone-600 lg:text-lg flex items-center">${display} ${item.word}</li>` }).join('')}</ul>`;
+                    reportHtml += `<p class="text-sm lg:text-base mt-1">${this.translations[uiLang].review_words}</p><ul>${p.incorrectlyAnsweredWords.map(item => { const display = item.color ? `<span class="inline-block w-4 h-4 rounded-full mr-2" style="background-color: ${item.color}; border: 1px solid #ccc;"></span>` : item.emoji; return `<li class="ml-4 text-stone-600 lg:text-lg flex items-center">${display} ${item.word}</li>` }).join('')}</ul>`;
                 } else {
-                    reportHtml += `<p class="text-green-600 font-semibold lg:text-lg">${this.translations[lang].all_correct}</p>`;
+                    reportHtml += `<p class="text-green-600 font-semibold lg:text-lg">${this.translations[uiLang].all_correct}</p>`;
                 }
                 reportHtml += `</div>`;
             });
             this.getEl('report-area').innerHTML = reportHtml;
         } else {
             const player = players[0];
-            this.getEl('final-scoreboard').innerHTML = `<p class="text-2xl lg:text-4xl font-bold mb-6">${player.avatar} ${player.name} - ${this.translations[lang].final_score.replace('{x}', player.score).replace('{y}', this.gameState.words.length)}</p>`;
+            this.getEl('final-scoreboard').innerHTML = `<p class="text-2xl lg:text-4xl font-bold mb-6">${player.avatar} ${player.name} - ${this.translations[uiLang].final_score.replace('{x}', player.score).replace('{y}', this.gameState.words.length)}</p>`;
             if (player.incorrectlyAnsweredWords.length > 0) {
-                this.getEl('report-area').innerHTML = `<h3 class="text-xl lg:text-2xl font-bold mb-3 text-stone-700">${this.translations[lang].review_words}</h3><ul class="list-disc list-inside card-base p-4">${player.incorrectlyAnsweredWords.map(item => { const display = item.color ? `<span class="inline-block w-4 h-4 rounded-full mr-2" style="background-color: ${item.color}; border: 1px solid #ccc;"></span>` : item.emoji; return `<li class="text-lg lg:text-xl text-stone-600 flex items-center">${display} ${item.word}</li>` }).join('')}</ul>`;
+                this.getEl('report-area').innerHTML = `<h3 class="text-xl lg:text-2xl font-bold mb-3 text-stone-700">${this.translations[uiLang].review_words}</h3><ul class="list-disc list-inside card-base p-4">${player.incorrectlyAnsweredWords.map(item => { const display = item.color ? `<span class="inline-block w-4 h-4 rounded-full mr-2" style="background-color: ${item.color}; border: 1px solid #ccc;"></span>` : item.emoji; return `<li class="text-lg lg:text-xl text-stone-600 flex items-center">${display} ${item.word}</li>` }).join('')}</ul>`;
             } else {
-                this.getEl('report-area').innerHTML = `<p class="text-xl lg:text-2xl font-bold text-green-600 card-base p-4">${this.translations[lang].all_correct}</p>`;
+                this.getEl('report-area').innerHTML = `<p class="text-xl lg:text-2xl font-bold text-green-600 card-base p-4">${this.translations[uiLang].all_correct}</p>`;
             }
         }
     }
 };
 
-
-
 // --- 3. LÓGICA DO JOGO DO ROBÔ / ROBOT GAME LOGIC ---
-// Objeto `robotGame` contém todos os dados e métodos para o jogo.
-// The `robotGame` object contains all data and methods for the game.
-
 
 const robotGame = {
-    // --- Referências de Elementos do DOM / DOM Element References ---
+    // ... (restante do objeto do jogo do robô)
     canvas: null, ctx: null, scoreEl: null, levelEl: null, coinsEl: null,
     messageBox: null, startButton: null, levelUpMessageEl: null,
-    
-    // --- Constantes e Configurações do Jogo / Game Constants & Settings ---
     GAME_WIDTH: 800, GAME_HEIGHT: 500,
-    MAX_JUMPS: 2, JUMP_TIME_LIMIT: 25, JUMP_FORCE: -14,
-    
-    // --- Estado do Jogo / Game State ---
     player: {}, gravity: 0, gameSpeed: 0, platforms: [], score: 0, level: 0,
     gameOver: true, gameStarted: false, backgroundHills1: [], backgroundHills2: [],
-    coins: [], coinCount: 0, obstacles: [], 
-    isJumpButtonPressed: false, jumpTimeCounter: 0, jumpsLeft: 0,
+    coins: [], coinCount: 0, obstacles: [], obstacleImage: new Image(),
+    playerImage: new Image(), isJumpButtonPressed: false, jumpTimeCounter: 0,
+    jumpsLeft: 0, MAX_JUMPS: 2, JUMP_TIME_LIMIT: 25, JUMP_FORCE: -14,
     animationFrameId: null,
-
-    // --- Assets ---
-    obstacleImage: new Image(),
-    playerImage: new Image(),
     
-    // --- Configurações de Nível / Level Settings ---
     levels: [
         { speed: 3.5, minGap: 100, maxGap: 180, color: '#4CAF50' }, 
         { speed: 4, minGap: 110, maxGap: 200, color: '#FFC107' }, 
@@ -443,11 +446,6 @@ const robotGame = {
         { speed: 5.5, minGap: 140, maxGap: 260, color: '#9C27B0' },
     ],
 
-    /**
-     * Guarda as referências dos elementos do DOM para uso posterior.
-     * ---
-     * Caches DOM element references for later use.
-     */
     initElements: function() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
@@ -461,13 +459,6 @@ const robotGame = {
         this.canvas.height = this.GAME_HEIGHT;
     },
     
-    /**
-     * Carrega as imagens SVG do jogador e dos obstáculos.
-     * Mostra a tela inicial quando os assets estiverem prontos.
-     * ---
-     * Loads the SVG images for the player and obstacles.
-     * Shows the initial screen when assets are ready.
-     */
     loadAssets: function() {
         const playerSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="50" height="60" viewBox="0 0 50 60"><ellipse cx="25" cy="58" rx="20" ry="2" fill="rgba(0,0,0,0.3)"/><rect x="8" y="45" width="12" height="10" fill="#333" rx="3"/><rect x="30" y="45" width="12" height="10" fill="#333" rx="3"/><rect x="5" y="15" width="40" height="35" fill="#d3d3d3" rx="8"/><rect x="10" y="25" width="30" height="15" fill="#4a4a4a" rx="5"/><rect x="12" y="0" width="26" height="20" fill="#a9a9a9" rx="5"/><circle cx="25" cy="10" r="6" fill="#00f5d4"/><circle cx="26" cy="9" r="2" fill="#16213e"/></svg>`;
         const obstacleSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path d="M20,38 C30,38 35,30 35,20 C35,10 30,2 20,2 C10,2 5,10 5,20 C5,30 10,38 20,38 Z" fill="#c1121f"/><path d="M20,35 C28,35 32,28 32,20 C32,12 28,5 20,5 C12,5 8,12 8,20 C8,28 12,35 20,35 Z" fill="#e63946"/><circle cx="15" cy="18" r="3" fill="#fff"/><circle cx="25" cy="18" r="3" fill="#fff"/><circle cx="15.5" cy="18.5" r="1" fill="#000"/><circle cx="25.5" cy="18.5" r="1" fill="#000"/><path d="M15,28 Q20,25 25,28" stroke="#fff" stroke-width="2" fill="none"/></svg>`;
@@ -487,11 +478,6 @@ const robotGame = {
         this.obstacleImage.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(obstacleSVG);
     },
 
-    /**
-     * Prepara a tela inicial do jogo, desenhando o fundo e mostrando a mensagem de início.
-     * ---
-     * Prepares the game's initial screen, drawing the background and showing the start message.
-     */
     showInitialScreen: function() {
         this.gameStarted = false;
         this.gameOver = true;
@@ -504,11 +490,6 @@ const robotGame = {
         this.startButton.textContent = 'Iniciar Jogo';
     },
 
-    /**
-     * Inicia uma nova partida, resetando todas as variáveis de estado do jogo.
-     * ---
-     * Starts a new match, resetting all game state variables.
-     */
     initGame: function() {
         this.player = { x: 100, y: 100, width: 50, height: 60, dy: 0 };
         this.gravity = 0.5;
@@ -537,7 +518,6 @@ const robotGame = {
         this.loop();
     },
     
-    // --- Lógica de Controles / Controls Logic ---
     handleJumpStart: function() {
         if (this.jumpsLeft > 0 && this.gameStarted && !this.gameOver) {
             this.jumpsLeft--;
@@ -548,7 +528,6 @@ const robotGame = {
     },
     handleJumpEnd: function() { this.isJumpButtonPressed = false; },
 
-    // --- Lógica de Atualização (Update) / Update Logic ---
     updatePlayer: function() {
         if (this.isJumpButtonPressed && this.jumpTimeCounter > 0) {
             this.player.dy = this.JUMP_FORCE;
@@ -622,7 +601,7 @@ const robotGame = {
     },
 
     checkLevelUp: function() {
-        const newLevel = Math.floor(this.score / 1000);
+        const newLevel = Math.floor(this.score / 500); // MUDANÇA: Nível aumenta a cada 500 pontos
         if (this.score > 0 && newLevel > this.level) {
             this.level = newLevel;
             const config = this.levels[Math.min(this.level, this.levels.length - 1)];
@@ -633,7 +612,6 @@ const robotGame = {
         }
     },
     
-    // --- Lógica de Desenho (Draw) / Drawing Logic ---
     drawBackground: function() {
         if (!this.ctx) return;
         const sky = this.ctx.createLinearGradient(0, 0, 0, this.GAME_HEIGHT);
@@ -645,7 +623,7 @@ const robotGame = {
         this.backgroundHills2.forEach(h => { this.ctx.beginPath(); this.ctx.moveTo(h.x, this.GAME_HEIGHT); this.ctx.bezierCurveTo(h.x + h.w / 2, h.y, h.x + h.w / 2, h.y, h.x + h.w, this.GAME_HEIGHT); this.ctx.fill(); });
     },
 
-    drawPlayer: function() { this.ctx.drawImage(this.playerImage, this.player.x, this.player.y, this.player.width, this.player.height); },
+    drawPlayer: function() { if (this.player.x) this.ctx.drawImage(this.playerImage, this.player.x, this.player.y, this.player.width, this.player.height); },
 
     drawPlatforms: function() {
         this.platforms.forEach(p => {
@@ -682,12 +660,8 @@ const robotGame = {
         this.startButton.textContent = 'Jogar Novamente';
     },
 
-    // --- Loop Principal do Jogo / Main Game Loop ---
     loop: function() {
-        if (this.gameOver) { 
-            this.showGameOverScreen(); 
-            return; 
-        }
+        if (this.gameOver) { this.showGameOverScreen(); return; }
         this.animationFrameId = requestAnimationFrame(() => this.loop());
         this.ctx.clearRect(0, 0, this.GAME_WIDTH, this.GAME_HEIGHT);
         this.updatePlayer(); this.updatePlatformsAndObstacles(); this.updateCoins();
@@ -697,42 +671,25 @@ const robotGame = {
     }
 };
 
-
-// --- 4. INICIALIZAÇÃO GERAL / GENERAL INITIALIZATION ---
-// Garante que o código só rode depois que a página estiver totalmente carregada.
-// Ensures the code only runs after the page is fully loaded.
-
-
+// --- INICIALIZAÇÃO GERAL / GENERAL INITIALIZATION ---
 window.onload = () => {
-    // Inicializa os objetos dos jogos
-    // Initializes the game objects
+    // Inicializa os jogos / Initialize games
     languageGame.init();
     robotGame.initElements();
     robotGame.loadAssets();
     
-    // Adiciona os event listeners para o jogo do robô (pulo)
-    // Adds event listeners for the robot game (jump)
-    const jumpStart = (e) => { 
-        e.preventDefault(); 
-        if (!robotGame.gameOver) robotGame.handleJumpStart(); 
-    };
-    const jumpEnd = (e) => { 
-        e.preventDefault(); 
-        if (!robotGame.gameOver) robotGame.handleJumpEnd(); 
-    };
-
-    window.addEventListener('keydown', (e) => {
-        if (!robotGame.gameOver && (e.code === 'Space' || e.code === 'Enter')) jumpStart(e);
-    });
-    window.addEventListener('keyup', (e) => {
-        if (!robotGame.gameOver && (e.code === 'Space' || e.code === 'Enter')) jumpEnd(e);
-    });
-
+    // Adiciona os event listeners para o jogo do robô / Add event listeners for the robot game
+    const jumpStart = (e) => { e.preventDefault(); robotGame.handleJumpStart(); };
+    const jumpEnd = (e) => { e.preventDefault(); robotGame.handleJumpEnd(); };
+    window.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'Enter') jumpStart(e); });
+    window.addEventListener('keyup', (e) => { if (e.code === 'Space' || e.code === 'Enter') jumpEnd(e); });
     robotGame.canvas.addEventListener('touchstart', jumpStart);
     robotGame.canvas.addEventListener('touchend', jumpEnd);
 
-    // Mostra a tela do hub como tela inicial
-    // Shows the hub screen as the initial screen
+    // Configura o estado inicial do tema e ícones / Setup initial theme state and icons
+    updateThemeIcons();
+
+    // Mostra a tela do hub / Show the hub screen
     showHub();
 };
 
