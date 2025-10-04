@@ -82,20 +82,18 @@ html.dark #language-game-wrapper {
 #theme-toggle, #lang-selector {
     background-color: var(--bg-card);
     box-shadow: 0 2px 4px var(--shadow-color);
-    border-radius: 9999px; /* rounded-full */
 }
-
 #theme-toggle {
+    border-radius: 9999px; /* rounded-full */
     transition: transform 0.2s ease;
 }
-
 #theme-toggle:hover {
     transform: scale(1.1);
 }
 
 #lang-selector {
     padding: 0.25rem; /* p-1 */
-    display: flex;
+    border-radius: 9999px; /* rounded-full */
 }
 
 .lang-btn {
@@ -111,7 +109,7 @@ html.dark #language-game-wrapper {
 .lang-btn.selected {
     opacity: 1;
     background-color: var(--text-highlight);
-    color: white; /* Garante que o emoji não mude de cor */
+    color: white; /* Garante que o texto/emoji não mude de cor */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -201,6 +199,8 @@ html.dark #question-area h2 {
 
 /* Estilos base (mantidos) */
 .card-base {
+    position: relative; /* CORREÇÃO: Cria um contexto de empilhamento */
+    z-index: 1; /* CORREÇÃO: Garante que os cards fiquem abaixo dos botões posicionados de forma absoluta */
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
@@ -232,10 +232,16 @@ html.dark #question-area h2 {
     0% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.7); }
     100% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
 }
+
+/* Posição e z-index dos botões de voltar / Position and z-index for back buttons */
 .back-to-hub-btn {
     position: absolute;
     top: 15px;
     left: 15px;
+    z-index: 50; /* Garante que fique acima dos cards */
+}
+#game-screen .btn[data-translate-key="back_to_menu"] {
+    position: relative;
     z-index: 50;
 }
 
