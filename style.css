@@ -4,11 +4,12 @@
   EN: Defines the color variables for the light theme.
 */
 html.light {
-    --bg-primary: #f0f4f8; /* slate-100 */
+    --bg-primary: #f0f4f8;
     --bg-card: rgba(255, 255, 255, 0.7);
-    --text-primary: #1e293b; /* slate-800 */
-    --text-secondary: #475569; /* slate-600 */
-    --text-highlight: #4f46e5; /* indigo-600 */
+    --bg-control: rgba(0, 0, 0, 0.05);
+    --text-primary: #1e293b; 
+    --text-secondary: #94a3b8; 
+    --text-highlight: #4f46e5; 
     --border-color: transparent;
     --shadow-color: rgba(0, 0, 0, 0.1);
     --icon-color: #1e293b;
@@ -22,21 +23,22 @@ html.light {
   EN: Defines the color variables for the dark theme.
 */
 html.dark {
-    --bg-primary: #0f172a; /* slate-900 */
-    --bg-card: #1e293b; /* slate-800 sólido */
-    --bg-card-opaque: #1e293b; /* slate-800 sólido */
-    --bg-input: #334155; /* slate-700 */
-    --text-primary: #f1f5f9; /* slate-100 */
-    --text-secondary: #94a3b8; /* slate-400 */
-    --text-highlight: #818cf8; /* indigo-400 */
-    --border-color: #4338ca; /* indigo-700 */
+    --bg-primary: #0f172a; 
+    --bg-card: #1e293b; 
+    --bg-control: rgba(71, 85, 105, 0.3); 
+    --bg-card-opaque: #1e293b; 
+    --bg-input: #334155; 
+    --text-primary: #f1f5f9; 
+    --text-secondary: #94a3b8; 
+    --text-highlight: #818cf8; 
+    --border-color: #4338ca; 
     --border-color-light: #4a5162;
     --shadow-color: rgba(0, 0, 0, 0.3);
     --icon-color: #f1f5f9;
 
     /* Gradientes do Fundo (mais sutis) / Background Gradients (more subtle) */
-    --grad-1: rgba(79, 70, 229, 0.2); /* indigo-600 com alpha */
-    --grad-2: rgba(56, 189, 248, 0.15); /* sky-400 com alpha */
+    --grad-1: rgba(79, 70, 229, 0.2); 
+    --grad-2: rgba(56, 189, 248, 0.15); 
 }
 
 /* PT: Aplica as variáveis aos elementos.
@@ -64,6 +66,8 @@ html.dark #language-game-wrapper {
 #hub-screen p { color: var(--text-secondary); }
 
 .game-card {
+    position: relative; 
+    z-index: 2;
     background-color: var(--bg-card);
     backdrop-filter: blur(10px);
     border: 2px solid transparent;
@@ -78,13 +82,14 @@ html.dark #language-game-wrapper {
     color: var(--text-secondary);
 }
 
+
 /* Botão de Tema e Seletor de Idioma / Theme Button & Language Selector */
 #theme-toggle, #lang-selector {
-    background-color: var(--bg-card);
+    background-color: var(--bg-control);
     box-shadow: 0 2px 4px var(--shadow-color);
 }
 #theme-toggle {
-    border-radius: 9999px; /* rounded-full */
+    border-radius: 9999px;
     transition: transform 0.2s ease;
 }
 #theme-toggle:hover {
@@ -92,25 +97,25 @@ html.dark #language-game-wrapper {
 }
 
 #lang-selector {
-    padding: 0.25rem; /* p-1 */
-    border-radius: 9999px; /* rounded-full */
+    border-radius: 9999px;
+    width: 120px;
+}
+
+#lang-slider {
+    background-color: var(--text-highlight);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .lang-btn {
-    padding: 0.25rem 0.5rem; /* p-1 px-2 */
-    border-radius: 9999px;
-    opacity: 0.6;
-    transition: all 0.2s ease;
+    padding: 0.25rem 0.5rem;
+    transition: color 0.3s ease;
+    color: var(--text-secondary);
+    font-weight: bold;
+    font-size: 1rem;
 }
-.lang-btn:hover {
-    opacity: 1;
-    transform: scale(1.1);
-}
-.lang-btn.selected {
-    opacity: 1;
-    background-color: var(--text-highlight);
-    color: white; /* Garante que o texto/emoji não mude de cor */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+.lang-btn.active {
+    color: white;
 }
 
 
@@ -128,11 +133,16 @@ html.dark #language-game-wrapper {
 
 /* Componentes do Jogo de Idiomas no modo escuro */
 html.dark #language-game-wrapper .card-base,
-html.dark #language-game-wrapper .back-to-hub-btn {
+html.dark #language-game-wrapper .back-to-hub-btn,
+html.dark #language-game-wrapper .btn[data-translate-key="back_to_menu"] {
     background-color: var(--bg-card);
     color: var(--text-primary);
     border: 1px solid var(--border-color-light);
 }
+html.dark #language-game-wrapper .btn[data-translate-key="back_to_menu"]:hover {
+     background-color: var(--border-color-light);
+}
+
 
 html.dark #language-game-wrapper h1,
 html.dark #language-game-wrapper .text-indigo-600 {
@@ -163,7 +173,7 @@ html.dark #language-game-wrapper input::placeholder {
 
 /* Cards internos (ex: seleção de avatar) */
 html.dark #language-game-wrapper .bg-stone-50\/70 {
-    background-color: rgba(15, 23, 42, 0.5); /* Fundo um pouco mais escuro para o painel de avatar */
+    background-color: rgba(15, 23, 42, 0.5); 
 }
 
 /* Botões de Categoria, Voltar, etc. */
@@ -194,13 +204,13 @@ html.dark #language-game-wrapper .mode-btn.selected.border-amber-500 {
     color: #0F766E;
 }
 html.dark #question-area h2 {
-    color: #2dd4bf; /* Teal-400 para melhor contraste no escuro */
+    color: #2dd4bf; 
 }
 
 /* Estilos base (mantidos) */
 .card-base {
-    position: relative; /* CORREÇÃO: Cria um contexto de empilhamento */
-    z-index: 1; /* CORREÇÃO: Garante que os cards fiquem abaixo dos botões posicionados de forma absoluta */
+    position: relative; 
+    z-index: 1; 
     background-color: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
@@ -233,20 +243,18 @@ html.dark #question-area h2 {
     100% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
 }
 
-/* Posição e z-index dos botões de voltar / Position and z-index for back buttons */
 .back-to-hub-btn {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 50; /* Garante que fique acima dos cards */
-}
-#game-screen .btn[data-translate-key="back_to_menu"] {
-    position: relative;
-    z-index: 50;
+    top: 20px;
+    left: 20px;
+    z-index: 50; 
 }
 
 
 /* --- 4. ESTILOS DO JOGO DO ROBÔ / ROBOT GAME STYLES --- */
+#robot-game-wrapper .back-to-hub-btn {
+    position: static; 
+}
 
 #game-container {
     position: relative;
